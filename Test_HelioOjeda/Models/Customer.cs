@@ -12,7 +12,5 @@ namespace Test_HelioOjeda.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string PhotoURL { get; set; }
-
-        //Checking GitHub publish
     }
 }

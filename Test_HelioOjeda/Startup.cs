@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using Microsoft.EntityFrameworkCore;
+using Test_HelioOjeda.Models;
+
 namespace Test_HelioOjeda
 {
     public class Startup
