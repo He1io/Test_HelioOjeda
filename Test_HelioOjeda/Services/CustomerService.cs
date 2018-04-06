@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Test_HelioOjeda.Models;
@@ -31,13 +32,15 @@ namespace Test_HelioOjeda.Services
         }
 
         //CREATE CUSTOMER
-        public void createCustomer(Customer customerToSave)
+        public int createCustomer(Customer customerToSave)
         {
             string sql = "INSERT INTO customers (name, surname, photoUrl) " +
                "VALUES ('" + customerToSave.Name + "', '" + customerToSave.Surname + "', '" + customerToSave.PhotoURL + "')";
 
             MySql.Data.MySqlClient.MySqlCommand command = new MySql.Data.MySqlClient.MySqlCommand(sql, connection);
             command.ExecuteNonQuery();
+
+            return (int)command.LastInsertedId;
         }
 
         //READ ALL CUSTOMERS
@@ -69,11 +72,13 @@ namespace Test_HelioOjeda.Services
         public Customer getCustomer(int id)
         {
             Customer customer = new Customer();
-
-            string sql = "SELECT * FROM customers WHERE id = " + id;
+            
+            string sql = "SELECT * FROM customers WHERE id = @id";
 
             MySql.Data.MySqlClient.MySqlDataReader mySQLReader = null;
             MySql.Data.MySqlClient.MySqlCommand command = new MySql.Data.MySqlClient.MySqlCommand(sql, connection);
+            //Parameters to avoid SQL injection
+            command.Parameters.AddWithValue("@id", id);
             mySQLReader = command.ExecuteReader();
 
             //If the customer exists, read him
@@ -92,20 +97,26 @@ namespace Test_HelioOjeda.Services
         //UPDATE CUSTOMER
         public bool updateCustomer(int id, Customer updatedCustomer)
         {
-            string sql = "SELECT * FROM customers WHERE id = " + id;
+            string sql = "SELECT * FROM customers WHERE id = @id";
 
             MySql.Data.MySqlClient.MySqlDataReader mySQLReader = null;           
             MySql.Data.MySqlClient.MySqlCommand command = new MySql.Data.MySqlClient.MySqlCommand(sql, connection);
+            //Parameters to avoid SQL injection
+            command.Parameters.AddWithValue("@id", id);
             mySQLReader = command.ExecuteReader();
 
             //If the customer exists, update him
             if (mySQLReader.Read())
             {
-                string updateSql = "UPDATE customers SET name = '" + updatedCustomer.Name + "', surname = '" + updatedCustomer.Surname
-                + "', photoUrl = '" + updatedCustomer.PhotoURL + "'  WHERE id = " + id;
+                string updateSql = "UPDATE customers SET name = @name, surname = @surname, photoUrl = @photoUrl  WHERE id = @id";
 
                 mySQLReader.Close();
                 command = new MySql.Data.MySqlClient.MySqlCommand(updateSql, connection);
+                //Parameters to avoid SQL injection
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@name", updatedCustomer.Name);
+                command.Parameters.AddWithValue("@surname", updatedCustomer.Surname);
+                command.Parameters.AddWithValue("@photoUrl", updatedCustomer.PhotoURL);
                 command.ExecuteNonQuery();
                 return true;
             }
@@ -116,19 +127,23 @@ namespace Test_HelioOjeda.Services
         //DELETE CUSTOMER BY ID
         public bool deleteCustomer(int id)
         {
-            string sql = "SELECT * FROM customers WHERE id = " + id;
+            string sql = "SELECT * FROM customers WHERE id = @id";
 
             MySql.Data.MySqlClient.MySqlDataReader mySQLReader = null;
             MySql.Data.MySqlClient.MySqlCommand command = new MySql.Data.MySqlClient.MySqlCommand(sql, connection);
+            //Parameters to avoid SQL injection
+            command.Parameters.AddWithValue("@id", id);
             mySQLReader = command.ExecuteReader();
 
             //If the customer exists, delete him
             if (mySQLReader.Read())
             {
-                string deleteSql = "DELETE FROM customers WHERE id = " + id;
+                string deleteSql = "DELETE FROM customers WHERE id = @id";
 
                 mySQLReader.Close();
                 command = new MySql.Data.MySqlClient.MySqlCommand(deleteSql, connection);
+                //Parameters to avoid SQL injection
+                command.Parameters.AddWithValue("@id", id);
                 command.ExecuteNonQuery();
                 return true;
             }

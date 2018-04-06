@@ -40,51 +40,66 @@ namespace Test_HelioOjeda.Controllers
 
         // POST: api/Customer
         [HttpPost]
-        public HttpResponseMessage Post([FromBody]Customer customer)
+        public IActionResult Post([FromBody]Customer customer)
         {
-            CustomerService customerService = new CustomerService();
-            customerService.createCustomer(customer);
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            //Return a "Created" status code
-            HttpResponseMessage response = new HttpResponseMessage();
-            response.StatusCode = HttpStatusCode.Created;
-            return response;
+            CustomerService customerService = new CustomerService();
+            //Save the ID to show it in the response
+            customer.Id = customerService.createCustomer(customer);
+
+            return CreatedAtAction("POST", customer);
         }
         
         // PUT: api/Customer/id
         [HttpPut("{id}")]
-        public HttpResponseMessage Put(int id, [FromBody]Customer updatedCustomer)
+        public IActionResult Put(int id, [FromBody]Customer updatedCustomer)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             CustomerService customerService = new CustomerService();
             bool customerUpdated = false;
             customerUpdated = customerService.updateCustomer(id, updatedCustomer);
+            //Just to see the correct ID in the response
+            updatedCustomer.Id = id;
 
             if (customerUpdated)
             {
-                return new HttpResponseMessage(HttpStatusCode.NoContent);
+                return Ok(updatedCustomer);
             }
             else
             {
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                return NotFound();
             }
 
         }
         
         // DELETE: api/ApiWithActions/id
         [HttpDelete("{id}")]
-        public HttpResponseMessage Delete(int id)
+        public IActionResult Delete(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             CustomerService customerService = new CustomerService();
             bool customerDeleted = false;
             customerDeleted = customerService.deleteCustomer(id);
 
             if (customerDeleted)
             {
-                return new HttpResponseMessage(HttpStatusCode.NoContent);
+                return NoContent();
             }
             else
             {
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                return NotFound();
             }
         }
     }
