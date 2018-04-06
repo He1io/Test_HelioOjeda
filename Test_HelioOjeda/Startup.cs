@@ -11,6 +11,10 @@ using Microsoft.Extensions.Options;
 
 using Microsoft.EntityFrameworkCore;
 using Test_HelioOjeda.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Test_HelioOjeda
 {
@@ -26,6 +30,22 @@ namespace Test_HelioOjeda
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Added by me: JWT AUTHENTICATION
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = Configuration["Jwt:Issuer"],
+                ValidAudience = Configuration["Jwt:Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+            };
+        });
+
             services.AddMvc();
         }
 
@@ -36,6 +56,9 @@ namespace Test_HelioOjeda
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //Added by me
+            app.UseAuthentication();
 
             app.UseMvc();
         }

@@ -32,7 +32,7 @@ namespace Test_HelioOjeda.Services
         }
 
         //CREATE CUSTOMER
-        public int createCustomer(Customer customerToSave)
+        public int CreateCustomer(Customer customerToSave)
         {
             string sql = "INSERT INTO customers (name, surname, photoUrl) " +
                "VALUES ('" + customerToSave.Name + "', '" + customerToSave.Surname + "', '" + customerToSave.PhotoURL + "')";
@@ -44,7 +44,7 @@ namespace Test_HelioOjeda.Services
         }
 
         //READ ALL CUSTOMERS
-        public ArrayList getCustomers()
+        public ArrayList GetCustomers()
         {
             ArrayList customers = new ArrayList();
 
@@ -69,7 +69,7 @@ namespace Test_HelioOjeda.Services
         }
 
         //READ CUSTOMER BY ID
-        public Customer getCustomer(int id)
+        public Customer GetCustomer(int id)
         {
             Customer customer = new Customer();
             
@@ -95,7 +95,7 @@ namespace Test_HelioOjeda.Services
         }
 
         //UPDATE CUSTOMER
-        public bool updateCustomer(int id, Customer updatedCustomer)
+        public bool UpdateCustomer(int id, Customer updatedCustomer)
         {
             string sql = "SELECT * FROM customers WHERE id = @id";
 
@@ -125,7 +125,7 @@ namespace Test_HelioOjeda.Services
         }
 
         //DELETE CUSTOMER BY ID
-        public bool deleteCustomer(int id)
+        public bool DeleteCustomer(int id)
         {
             string sql = "SELECT * FROM customers WHERE id = @id";
 

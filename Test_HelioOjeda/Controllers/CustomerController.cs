@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Test_HelioOjeda.Models;
 using Test_HelioOjeda.Services;
@@ -10,6 +11,8 @@ namespace Test_HelioOjeda.Controllers
 {
     [Produces("application/json")]
     [Route("api/Customer")]
+    //Make sure that this class methods are only available for users who received a token
+    [Authorize]
     public class CustomerController : Controller
     {
         // GET: api/Customer
@@ -17,15 +20,16 @@ namespace Test_HelioOjeda.Controllers
         public ArrayList Get()
         {
             CustomerService customerService = new CustomerService();
-            return customerService.getCustomers();
+            return customerService.GetCustomers();
         }
 
         // GET: api/Customer/id
-        [HttpGet("{id}", Name = "Get")]
+        //**TESTING THE METHOD ONLY FOR ADMINS**
+        [HttpGet("{id}", Name = "Get"), Authorize(Roles = "admin")]
         public Customer Get(int id)
         {
             CustomerService customerService = new CustomerService();
-            return customerService.getCustomer(id);
+            return customerService.GetCustomer(id);
         }
 
 
@@ -49,7 +53,7 @@ namespace Test_HelioOjeda.Controllers
 
             CustomerService customerService = new CustomerService();
             //Save the ID to show it in the response
-            customer.Id = customerService.createCustomer(customer);
+            customer.Id = customerService.CreateCustomer(customer);
 
             return CreatedAtAction("POST", customer);
         }
@@ -65,7 +69,7 @@ namespace Test_HelioOjeda.Controllers
 
             CustomerService customerService = new CustomerService();
             bool customerUpdated = false;
-            customerUpdated = customerService.updateCustomer(id, updatedCustomer);
+            customerUpdated = customerService.UpdateCustomer(id, updatedCustomer);
             //Just to see the correct ID in the response
             updatedCustomer.Id = id;
 
@@ -91,7 +95,7 @@ namespace Test_HelioOjeda.Controllers
 
             CustomerService customerService = new CustomerService();
             bool customerDeleted = false;
-            customerDeleted = customerService.deleteCustomer(id);
+            customerDeleted = customerService.DeleteCustomer(id);
 
             if (customerDeleted)
             {
