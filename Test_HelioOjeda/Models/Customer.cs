@@ -16,5 +16,7 @@ namespace Test_HelioOjeda.Models
         [Required]
         public string Surname { get; set; }
         public string PhotoURL { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
     }
 }

@@ -24,8 +24,7 @@ namespace Test_HelioOjeda.Controllers
         }
 
         // GET: api/Customer/id
-        //**TESTING THE METHOD ONLY FOR ADMINS**
-        [HttpGet("{id}", Name = "Get"), Authorize(Roles = "admin")]
+        [HttpGet("{id}", Name = "Get")]
         public Customer Get(int id)
         {
             CustomerService customerService = new CustomerService();
@@ -46,14 +45,17 @@ namespace Test_HelioOjeda.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]Customer customer)
         {
+            var currentUser = User.Identity.Name;
+
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             CustomerService customerService = new CustomerService();
-            //Save the ID to show it in the response
-            customer.Id = customerService.CreateCustomer(customer);
+            //Save the ID and CreatedBy to show it in the response
+            customer.Id = customerService.CreateCustomer(customer, currentUser);
+            customer.CreatedBy = currentUser;
 
             return CreatedAtAction("POST", customer);
         }
@@ -62,6 +64,8 @@ namespace Test_HelioOjeda.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]Customer updatedCustomer)
         {
+            var currentUser = User.Identity.Name;
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -69,9 +73,10 @@ namespace Test_HelioOjeda.Controllers
 
             CustomerService customerService = new CustomerService();
             bool customerUpdated = false;
-            customerUpdated = customerService.UpdateCustomer(id, updatedCustomer);
-            //Just to see the correct ID in the response
+            customerUpdated = customerService.UpdateCustomer(id, updatedCustomer, currentUser);
+            //Just to see the correct ID and ModifiedBy in the response
             updatedCustomer.Id = id;
+            updatedCustomer.ModifiedBy = currentUser;
 
             if (customerUpdated)
             {

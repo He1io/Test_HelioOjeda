@@ -1,8 +1,11 @@
-﻿using System;
+﻿
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Test_HelioOjeda.Models;
 
@@ -32,10 +35,10 @@ namespace Test_HelioOjeda.Services
         }
 
         //CREATE CUSTOMER
-        public int CreateCustomer(Customer customerToSave)
+        public int CreateCustomer(Customer customerToSave, string currentUser)
         {
-            string sql = "INSERT INTO customers (name, surname, photoUrl) " +
-               "VALUES ('" + customerToSave.Name + "', '" + customerToSave.Surname + "', '" + customerToSave.PhotoURL + "')";
+            string sql = "INSERT INTO customers (name, surname, photoUrl, createdBy) " +
+               "VALUES ('" + customerToSave.Name + "', '" + customerToSave.Surname + "', '" + customerToSave.PhotoURL + "', '" + currentUser + "')";
 
             MySql.Data.MySqlClient.MySqlCommand command = new MySql.Data.MySqlClient.MySqlCommand(sql, connection);
             command.ExecuteNonQuery();
@@ -61,7 +64,16 @@ namespace Test_HelioOjeda.Services
                 customer.Id = mySQLReader.GetInt16(0);
                 customer.Name = mySQLReader.GetString(1);
                 customer.Surname = mySQLReader.GetString(2);
-                customer.PhotoURL = mySQLReader.GetString(3);
+                
+                if(!mySQLReader.IsDBNull(3))
+                    customer.PhotoURL = mySQLReader.GetString(3);
+
+                if (!mySQLReader.IsDBNull(4))
+                    customer.CreatedBy = mySQLReader.GetString(4);
+
+                if (!mySQLReader.IsDBNull(5))
+                    customer.ModifiedBy = mySQLReader.GetString(5);
+
                 customers.Add(customer);
             }
 
@@ -87,7 +99,16 @@ namespace Test_HelioOjeda.Services
                 customer.Id = mySQLReader.GetInt16(0);
                 customer.Name = mySQLReader.GetString(1);
                 customer.Surname = mySQLReader.GetString(2);
-                customer.PhotoURL = mySQLReader.GetString(3);
+
+                if (!mySQLReader.IsDBNull(3))
+                    customer.PhotoURL = mySQLReader.GetString(3);
+
+                if (!mySQLReader.IsDBNull(4))
+                    customer.CreatedBy = mySQLReader.GetString(4);
+
+                if (!mySQLReader.IsDBNull(5))
+                    customer.ModifiedBy = mySQLReader.GetString(5);
+
                 return customer;
             }
 
@@ -95,7 +116,7 @@ namespace Test_HelioOjeda.Services
         }
 
         //UPDATE CUSTOMER
-        public bool UpdateCustomer(int id, Customer updatedCustomer)
+        public bool UpdateCustomer(int id, Customer updatedCustomer, string currentUser)
         {
             string sql = "SELECT * FROM customers WHERE id = @id";
 
@@ -108,7 +129,7 @@ namespace Test_HelioOjeda.Services
             //If the customer exists, update him
             if (mySQLReader.Read())
             {
-                string updateSql = "UPDATE customers SET name = @name, surname = @surname, photoUrl = @photoUrl  WHERE id = @id";
+                string updateSql = "UPDATE customers SET name = @name, surname = @surname, photoUrl = @photoUrl, modifiedBy = @modifiedBy  WHERE id = @id";
 
                 mySQLReader.Close();
                 command = new MySql.Data.MySqlClient.MySqlCommand(updateSql, connection);
@@ -117,6 +138,7 @@ namespace Test_HelioOjeda.Services
                 command.Parameters.AddWithValue("@name", updatedCustomer.Name);
                 command.Parameters.AddWithValue("@surname", updatedCustomer.Surname);
                 command.Parameters.AddWithValue("@photoUrl", updatedCustomer.PhotoURL);
+                command.Parameters.AddWithValue("@modifiedBy", currentUser);
                 command.ExecuteNonQuery();
                 return true;
             }

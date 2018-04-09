@@ -45,7 +45,7 @@ namespace Test_HelioOjeda.Controllers
         private string BuildToken(User user)
         {
             var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Name),
+                new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, "user"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
