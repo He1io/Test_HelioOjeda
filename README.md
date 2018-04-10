@@ -22,6 +22,7 @@ USER:     {"name":"Helio", "pasword":"helio", "isAdmin": true}
 ### Installing
 
 · Visual Studio 2017
+
 · Postman or similar
 
 · MySQL Workbench or similar
