@@ -26,7 +26,7 @@ USER:     {"name":"Helio", "pasword":"helio", "isAdmin": true}
 
 · MySQL Workbench or similar
 
-If you want the API to work without canges you will need a database called  "test_theam" with the following tables:
+If you want the API to work without changes you will need a database called  "test_theam" with the following tables:
 
 DROP TABLE IF EXISTS 'users';
 CREATE TABLE 'users' (
