@@ -16,7 +16,7 @@ CRUD operations (Users and Customers) but if you are not, you will only be able 
 
 POST and PUT operations will need a JSON with a User/Customer format in the request body:
 
-CUSTOMER: {"name":"Helio", "surname":"Ojeda", "photoUrl":"www.testing.com"}
+CUSTOMER: {"name":"Helio", "surname":"Ojeda", "photoUrl":"testingUrl"}
 USER:     {"name":"Helio", "pasword":"helio", "isAdmin": true}
 
 ### Installing
@@ -26,7 +26,7 @@ USER:     {"name":"Helio", "pasword":"helio", "isAdmin": true}
 
 · MySQL Workbench or similar
 
-If you want the API to work without changes you will need a database called  "test_theam" with the following tables:
+If you want the API to work without changes you will need a database called "test_theam" (user: root, password: root) with the following tables:
 
 DROP TABLE IF EXISTS 'users';
 CREATE TABLE 'users' (
